@@ -398,6 +398,12 @@ m_sa1_daw <- leaflet(data = sa1_map_s) %>%
   addPolygons(data = nats_map, color = "#696969", weight = 2, opacity = 1, fill = FALSE, label = nats_map$Elect_div, highlight = highlightOptions(weight = 1, color = "black", bringToFront = TRUE)) %>% 
   addLegend(title = "TPP Swing to LNP (%)", pal = pal_t_s_nats, values = c(-20, 20), position = "bottomright")
 
+
+
+
+
+
+
 # nats function
 
 pal_t_s_nats <- colorBin(c("#990000", "#ff0000", "#ff9999", "white", "#ccccff", "#0000ff", "#0000b3"), domain = sa1_map_s$swing, bins = c(-35, -10, -5, 0, 5, 10, 35))
@@ -411,7 +417,8 @@ sa1_s_nat_seat <- sa1_s %>%
 
 sa1_map_s <- sp::merge(sa1_map_org, sa1_s_nat_seat, by = "SA1_7DIG16", all=F, duplicateGeoms = T)
 
-# nats_map_seat <- fed_elec[fed_elec$Elect_div == di, ]
+
+nats_map_seat <- fed_elec[fed_elec@data$Elect_div == x, ]
 
 # sa1_map_s_wc <- raster::intersect(sa1_map_s, wc_map)
 
@@ -431,8 +438,10 @@ m1 <- leaflet(data = sa1_map_s) %>%
       style = list("font-weight" = "normal", padding = "3px 8px"),
       textsize = "12px",
       direction = "auto")) %>% 
-  addLegend(title = "TPP Swing to LNP (%)", pal = pal_t_s_nats, values = c(-20, 20), position = "bottomright")
+  addLegend(title = "TPP Swing to LNP (%)", pal = pal_t_s_nats, values = c(-20, 20), position = "bottomright") %>% 
+  addPolygons(data = nats_map_seat, color = "#696969", weight = 2, opacity = 1, fill = FALSE, label = x, highlight = highlightOptions(weight = 1, color = "black", bringToFront = TRUE))
 
+saveWidget(m1, file=paste0("C:/Users/matt/Documents/R/sa_map/nats/m_sa1_", x, ".html"), selfcontained = T)
 
 }
 
@@ -442,15 +451,8 @@ names(p_nats_maps) <- unique(list_nats)
 
 # each nats seat
 
-m_sa1_daw <- p_nats_maps$Dawson %>% 
-  addPolygons(data = fed_elec[fed_elec$Elect_div %in% "Dawson", ], color = "#696969", weight = 2, opacity = 1, fill = FALSE, label = fed_elec[fed_elec$Elect_div %in% "Dawson", ]$Elect_div, highlight = highlightOptions(weight = 1, color = "black", bringToFront = TRUE))
+# saveWidget(p_nats_maps$Dawson, file="C:/Users/matt/Documents/R/sa_map/nats/m_sa1_daw.html", selfcontained = T)
 
-# saveWidget(m_sa1_daw, file="C:/Users/matt/Documents/R/sa_map/nats/m_sa1_daw.html")
-
-
-
-m_sa1_page <- p_nats_maps$Page %>% 
-  addPolygons(data = fed_elec[fed_elec$Elect_div %in% "Page", ], color = "#696969", weight = 2, opacity = 1, fill = FALSE, label = fed_elec[fed_elec$Elect_div %in% "Page", ]$Elect_div, highlight = highlightOptions(weight = 1, color = "black", bringToFront = TRUE))
 
 # saveWidget(m_sa1_page, file="C:/Users/matt/Documents/R/sa_map/nats/m_sa1_page.html")
 

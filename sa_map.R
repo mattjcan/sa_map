@@ -25,9 +25,9 @@ background <- c("#e5e5df")
 
 theme_mc <- theme_economist() + 
   theme(legend.position="none") + 
-  theme(plot.title = element_text(size = 10, face = "bold")) +
-  theme(axis.text = element_text(size = 10, vjust = 0.3, hjust = 0.5)) +
-  theme(axis.title.y = element_text(size = 10)) +
+  theme(plot.title = element_text(size = 12, face = "bold")) +
+  theme(axis.text = element_text(size = 12, vjust = 0.3, hjust = 0.5)) +
+  theme(axis.title.y = element_text(size = 12)) +
   theme(axis.line = element_blank()) +
   theme(axis.ticks.y = element_blank()) +
   theme(plot.caption = element_text(hjust = 0, size = 9)) +
@@ -95,6 +95,8 @@ m_sa2_s <- leaflet(data = sa2_map_s) %>%
       direction = "auto")) 
 
 # saveWidget(m_sa2_s, file="m_sa2_s.html")
+
+# mapshot(m_sa2_s, file = "m_sa2_s.png")
 
 # tidy
 
@@ -239,6 +241,8 @@ m_sa2_s_100 <- leaflet(data = sa2_map_s_100) %>%
 
 # saveWidget(m_sa2_s_100, file="m_sa2_s_100.html")
 
+# mapshot(m_sa2_s_100, file = "m_sa2_s_100.png")
+
 # maps coal 
 
 sa2_map_s_coal <- sp::merge(sa2_map_org, sa2_s_coal, by = "SA2_5DIG16", all=F)
@@ -274,8 +278,8 @@ p_min_swing <- t_min_swing %>%
   theme_mc +
   labs(title = "Two party preferred swing to LNP", subtitle = "%, by SA2s", x = "", y = "") +
   theme(panel.grid.major = element_blank()) +
-  geom_text(aes(label = paste(round(swing,1))), vjust = -1, size=2.5) +
-  ylim(0, 5)
+  geom_text(aes(label = paste(round(swing,1))), vjust = -1, size=4) +
+  ylim(0, 6)
 
 # sa1 maps
 
@@ -326,10 +330,136 @@ m_sa1_s_wc <- leaflet(data = sa1_map_s_wc) %>%
 # saveWidget(m_sa1_s_wc, file="m_sa1_s_wc_qld.html")
 
 
+# nats
+
+list_nats <- c("Dawson", "Capricornia", "Flynn", "Wide Bay", "Hinkler", "Maranoa", "Richmond", "Page", "New England", "Lyne", "Cowper", "Hunter", "Calare", "Parkes", "Mallee", "Nicholls", "Indi", "Gippsland", "Durack", "Cowper", "Riverina", "Lingiari", "Gilmore", "Kennedy", "Eden-Monaro", "Whitlam", "Braddon", "Lyons", "O'Connor", "Barker", "Pearce", "Bass")
+
+sa1_s_nats <- sa1_s %>% 
+  filter(div_nm %in% list_nats)
+
+sa1_map_s <- sp::merge(sa1_map_org, sa1_s_nats, by = "SA1_7DIG16", all=F, duplicateGeoms = T)
+
+nats_map <- fed_elec[fed_elec$Elect_div %in% list_nats, ]
+
+# sa1_map_s_wc <- raster::intersect(sa1_map_s, wc_map)
+
+pal_t_s_nats <- colorBin(c("#990000", "#ff0000", "#ff9999", "white", "#ccccff", "#0000ff", "#0000b3"), domain = sa1_map_s$swing, bins = c(-35, -10, -5, 0, 5, 10, 35))
+
+labels_s_nats <- sprintf(
+  "<strong>%s</strong><br/>LNP Swing: %g %%",
+  sa1_map_s$SA1_7DIG16, round(sa1_map_s$swing,1)) %>% lapply(htmltools::HTML)
+
+m_sa1_s_nats <- leaflet(data = sa1_map_s) %>% 
+  addProviderTiles("CartoDB") %>%  
+  addPolygons(fillColor = ~pal_t_s_nats(swing), fillOpacity = 0.5, weight = 0.5, color = "black", smoothFactor = 0, highlight = highlightOptions(
+    weight = 3,
+    color = "white",
+    fillOpacity = 1,
+    bringToFront = TRUE),
+    label = labels_s_nats,
+    labelOptions = labelOptions(
+      style = list("font-weight" = "normal", padding = "3px 8px"),
+      textsize = "12px",
+      direction = "auto")) %>% 
+  addPolygons(data = nats_map, color = "#696969", weight = 2, opacity = 1, fill = FALSE, label = nats_map$Elect_div, highlight = highlightOptions(weight = 1, color = "black", bringToFront = TRUE)) %>% 
+  addLegend(title = "TPP Swing to LNP (%)", pal = pal_t_s_nats, values = c(-20, 20), position = "bottomright")
+
+# saveWidget(m_sa1_s_nats, file="m_sa1_s_nats_qld.html")
+
+# nats individual seats
+
+sa1_s_nat_seat <- sa1_s %>% 
+  filter(div_nm %in% "Dawson")
+
+sa1_map_s <- sp::merge(sa1_map_org, sa1_s_nat_seat, by = "SA1_7DIG16", all=F, duplicateGeoms = T)
+
+pal_t_s_nats <- colorBin(c("#990000", "#ff0000", "#ff9999", "white", "#ccccff", "#0000ff", "#0000b3"), domain = sa1_map_s$swing, bins = c(-35, -10, -5, 0, 5, 10, 35))
+
+nats_map <- fed_elec[fed_elec$Elect_div %in% "Dawson", ]
+
+# sa1_map_s_wc <- raster::intersect(sa1_map_s, wc_map)
+
+labels_s_nats <- sprintf(
+  "<strong>%s</strong><br/>LNP Swing: %g %%",
+  sa1_map_s$SA1_7DIG16, round(sa1_map_s$swing,1)) %>% lapply(htmltools::HTML)
+
+m_sa1_daw <- leaflet(data = sa1_map_s) %>% 
+  addProviderTiles("CartoDB") %>%  
+  addPolygons(fillColor = ~pal_t_s_nats(swing), fillOpacity = 0.5, weight = 0.5, color = "black", smoothFactor = 0, highlight = highlightOptions(
+    weight = 3,
+    color = "white",
+    fillOpacity = 1,
+    bringToFront = TRUE),
+    label = labels_s_nats,
+    labelOptions = labelOptions(
+      style = list("font-weight" = "normal", padding = "3px 8px"),
+      textsize = "12px",
+      direction = "auto")) %>% 
+  addPolygons(data = nats_map, color = "#696969", weight = 2, opacity = 1, fill = FALSE, label = nats_map$Elect_div, highlight = highlightOptions(weight = 1, color = "black", bringToFront = TRUE)) %>% 
+  addLegend(title = "TPP Swing to LNP (%)", pal = pal_t_s_nats, values = c(-20, 20), position = "bottomright")
+
+# nats function
+
+pal_t_s_nats <- colorBin(c("#990000", "#ff0000", "#ff9999", "white", "#ccccff", "#0000ff", "#0000b3"), domain = sa1_map_s$swing, bins = c(-35, -10, -5, 0, 5, 10, 35))
+
+# nats individual seats
+
+f_nats_maps <- function(x) {
+
+sa1_s_nat_seat <- sa1_s %>% 
+  filter(div_nm %in% x)
+
+sa1_map_s <- sp::merge(sa1_map_org, sa1_s_nat_seat, by = "SA1_7DIG16", all=F, duplicateGeoms = T)
+
+# nats_map_seat <- fed_elec[fed_elec$Elect_div == di, ]
+
+# sa1_map_s_wc <- raster::intersect(sa1_map_s, wc_map)
+
+labels_s_nats <- sprintf(
+  "<strong>%s</strong><br/>LNP Swing: %g %%",
+  sa1_map_s$SA1_7DIG16, round(sa1_map_s$swing,1)) %>% lapply(htmltools::HTML)
+
+m1 <- leaflet(data = sa1_map_s) %>% 
+  addProviderTiles("CartoDB") %>%  
+  addPolygons(fillColor = ~pal_t_s_nats(swing), fillOpacity = 0.5, weight = 0.5, color = "black", smoothFactor = 0, highlight = highlightOptions(
+    weight = 3,
+    color = "white",
+    fillOpacity = 1,
+    bringToFront = TRUE),
+    label = labels_s_nats,
+    labelOptions = labelOptions(
+      style = list("font-weight" = "normal", padding = "3px 8px"),
+      textsize = "12px",
+      direction = "auto")) %>% 
+  addLegend(title = "TPP Swing to LNP (%)", pal = pal_t_s_nats, values = c(-20, 20), position = "bottomright")
+
+
+}
+
+p_nats_maps <- map(list_nats, f_nats_maps)
+
+names(p_nats_maps) <- unique(list_nats)
+
+# each nats seat
+
+m_sa1_daw <- p_nats_maps$Dawson %>% 
+  addPolygons(data = fed_elec[fed_elec$Elect_div %in% "Dawson", ], color = "#696969", weight = 2, opacity = 1, fill = FALSE, label = fed_elec[fed_elec$Elect_div %in% "Dawson", ]$Elect_div, highlight = highlightOptions(weight = 1, color = "black", bringToFront = TRUE))
+
+# saveWidget(m_sa1_daw, file="C:/Users/matt/Documents/R/sa_map/nats/m_sa1_daw.html")
+
+
+
+m_sa1_page <- p_nats_maps$Page %>% 
+  addPolygons(data = fed_elec[fed_elec$Elect_div %in% "Page", ], color = "#696969", weight = 2, opacity = 1, fill = FALSE, label = fed_elec[fed_elec$Elect_div %in% "Page", ]$Elect_div, highlight = highlightOptions(weight = 1, color = "black", bringToFront = TRUE))
+
+# saveWidget(m_sa1_page, file="C:/Users/matt/Documents/R/sa_map/nats/m_sa1_page.html")
+
+
+
 
 # EXPORT ---- 
 
-png("images/p_min_swing.png", width = 6, height = 3, units = "in", res = 300)
-p_min_swing
-dev.off()
+# png("images/p_min_swing.png", width = 6, height = 3, units = "in", res = 300)
+# p_min_swing
+# dev.off()
 

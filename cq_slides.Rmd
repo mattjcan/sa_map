@@ -1,0 +1,130 @@
+---
+title: "CQ 2019 election results"
+author: 
+date: 
+output:
+  xaringan::moon_reader:
+    css: ["default", "libs/mjc-css/mjc-theme.css", "libs/mjc-css/mjc-fonts.css"]
+    lib_dir: libs
+---
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo=FALSE, warning=FALSE, message=FALSE, dpi = 300, fig.height = 5)
+
+library(knitr)
+
+source("sa_map.R")
+source("C:/Users/matt/Documents/R/election_2019_nd/election_2019.R")
+```
+
+# CQ analysis of 2019 election 
+
+- These slides provide some detailed information of the results of the federal election in 2019 in Central Queenslans. 
+
+- Online versions of the maps can be found at https://mattjcan.github.io/sa_map/....html
+
+---
+
+# We did well in coal seats
+
+``` {r }
+grid.arrange(p_tpp_coal, p_tpp_coal_swing, ncol = 1)
+```
+
+---
+
+# The LNP did well across CQ
+
+``` {r }
+grid.arrange(p_tpp_coal_div, p_tpp_coal_div_swing, ncol = 1)
+```
+
+---
+  
+# Statistically true too! 
+
+``` {r }
+grid.arrange(p_min_swing, p_lm_coal, ncol = 1)
+```
+
+---
+
+# The Labor vote collapsed in coal seats 
+
+``` {r }
+grid.arrange(p_pd_coal_alp, p_pd_coal_alp_swing, ncol = 1)
+```
+
+---
+
+# TPP swing
+
+```{r }
+frameWidget(m_sa1_s_cq, width='100%', height = '500px')
+```
+
+---
+
+# TPP swing
+
+```{r }
+frameWidget(m_sa2_s_cq, width='100%', height = '500px')
+```
+
+---
+
+# TPP
+
+```{r }
+frameWidget(m_sa1_cq, width='100%', height = '500px')
+```
+
+---
+
+# TPP 
+
+```{r }
+frameWidget(m_sa2_cq, width='100%', height = '500px')
+```
+
+---
+
+# Preference flows
+
+``` {r }
+p_dop_cq
+```
+
+---
+
+# CQ state seats 
+
+```{r }
+frameWidget(m_cq_state, width='100%', height = '500px')
+```
+
+---
+
+
+# Central Queensland state seats
+
+``` {r }
+p_tpp_state_cq
+```
+
+---
+
+# Central Queensland state seats
+
+``` {r }
+grid.arrange(p_p_state$Mirani, p_p_state$Keppel, p_p_state$Rockhampton, p_p_state$Gladstone, ncol = 2) 
+```
+
+---
+
+# Central Queensland state seats
+
+``` {r }
+grid.arrange(p_p_state$Gregory, p_p_state$Callide, p_p_state$Burnett, p_p_state$Nanango, ncol = 2) 
+```

@@ -58,6 +58,8 @@ sa2_emp <- sa2_emp[2:2311, 1:717]
 
 fed_elec <- readOGR(paste0(d,"data/COM_ELB_region.shx"))
 
+qld_elec <- readOGR(paste0("C:/Users/matt/Documents/R/election_2019_nd/data/State_electoral_boundaries_2017.shx"))
+
 
 # TIDY ---- 
 
@@ -444,6 +446,45 @@ saveWidget(m1, file=paste0("C:/Users/matt/Documents/R/sa_map/nats/m_sa1_", x, ".
 
 # names(p_nats_maps) <- unique(list_nats)
 
+# individual nats sa1 seats
+
+x = "Eden-Monaro"
+
+sa1_s_nat_seat <- sa1_s %>% 
+  filter(div_nm %in% x)
+
+sa1_map_s <- sp::merge(sa1_map_org, sa1_s_nat_seat, by = "SA1_7DIG16", all=F, duplicateGeoms = T)
+
+nats_map_seat <- fed_elec[fed_elec@data$Elect_div == x, ]
+
+# sa1_map_s_wc <- raster::intersect(sa1_map_s, wc_map)
+
+labels_s_nats <- sprintf(
+  "<strong>%s</strong><br/>LNP Swing: %g %%",
+  sa1_map_s$SA1_7DIG16, round(sa1_map_s$swing,1)) %>% lapply(htmltools::HTML)
+
+
+m1 <- leaflet(data = sa1_map_s) %>% 
+  addProviderTiles("CartoDB") %>%  
+  addPolygons(fillColor = ~pal_t_s_nats(swing), fillOpacity = 0.5, weight = 0.5, color = "black", smoothFactor = 0, highlight = highlightOptions(
+    weight = 3,
+    color = "white",
+    fillOpacity = 1,
+    bringToFront = TRUE),
+    label = labels_s_nats,
+    labelOptions = labelOptions(
+      style = list("font-weight" = "normal", padding = "3px 8px"),
+      textsize = "12px",
+      direction = "auto")) %>% 
+  addLegend(title = "TPP Swing to LNP (%)", pal = pal_t_s_nats, values = c(-20, 20), position = "bottomright") %>% 
+  addPolygons(data = nats_map_seat, color = "#696969", weight = 1, opacity = 1, fill = FALSE, label = x, highlight = highlightOptions(weight = 1, color = "black", bringToFront = TRUE))
+
+m1 <- m1 %>% 
+  setView(lng = 149.149490, lat = -35.960780, zoom = 8)
+
+# saveWidget(m1, file=paste0("C:/Users/matt/Documents/R/sa_map/nats/m_sa1_", x, ".html"), selfcontained = T)
+
+
 # sa2
 
 
@@ -478,45 +519,42 @@ f_nats_maps_sa2 <- function(x) {
   
 }
 
-p_nats_maps_sa2 <- map(list_nats, f_nats_maps_sa2)
+# p_nats_maps_sa2 <- map(list_nats, f_nats_maps_sa2)
 
-names(p_nats_maps) <- unique(list_nats)
+# names(p_nats_maps) <- unique(list_nats)
 
 # indiviudal nats seats
 
+# list_nats <- c("Braddon", "Bass" )
 
-durack?
+# x <- "Braddon"
 
-list_nats <- c("Braddon", "Bass" )
+# nats_map_seat <- fed_elec[fed_elec@data$Elect_div == x, ]
 
-x <- "Braddon"
-
-nats_map_seat <- fed_elec[fed_elec@data$Elect_div == x, ]
-
-sa2_map_s_seat <- raster::intersect(sa2_map_s, nats_map_seat)
-
-labels_s_nats <- sprintf(
-  "<strong>%s</strong><br/>LNP Swing: %g %%<br/>Total votes: %g",
-  sa2_map_s_seat$SA2_NAME16, sa2_map_s_seat$swing, round(sa2_map_s_seat$v_t_sa2,0)
-) %>% lapply(htmltools::HTML)
-
-m1 <- leaflet(data = sa2_map_s_seat) %>% 
-  addProviderTiles("CartoDB") %>%  
-  addPolygons(fillColor = ~pal_t_s_nats(swing), fillOpacity = 0.5, weight = 0.5, color = "black", smoothFactor = 0, highlight = highlightOptions(
-    weight = 3,
-    color = "white",
-    fillOpacity = 1,
-    bringToFront = TRUE),
-    label = labels_s_nats,
-    labelOptions = labelOptions(
-      style = list("font-weight" = "normal", padding = "3px 8px"),
-      textsize = "12px",
-      direction = "auto")) %>% 
-  addLegend(title = "TPP Swing to LNP (%)", pal = pal_t_s_nats, values = c(-20, 20), position = "bottomright") %>% 
-  addPolygons(data = nats_map_seat, color = "#696969", weight = 1, opacity = 1, fill = FALSE, label = x, highlight = highlightOptions(weight = 1, color = "black", bringToFront = TRUE))
-
-saveWidget(m1, file=paste0("C:/Users/matt/Documents/R/sa_map/nats/m_sa2_", x, ".html"), selfcontained = T)
-
+# sa2_map_s_seat <- raster::intersect(sa2_map_s, nats_map_seat)
+# 
+# labels_s_nats <- sprintf(
+#   "<strong>%s</strong><br/>LNP Swing: %g %%<br/>Total votes: %g",
+#   sa2_map_s_seat$SA2_NAME16, sa2_map_s_seat$swing, round(sa2_map_s_seat$v_t_sa2,0)
+# ) %>% lapply(htmltools::HTML)
+# 
+# m1 <- leaflet(data = sa2_map_s_seat) %>% 
+#   addProviderTiles("CartoDB") %>%  
+#   addPolygons(fillColor = ~pal_t_s_nats(swing), fillOpacity = 0.5, weight = 0.5, color = "black", smoothFactor = 0, highlight = highlightOptions(
+#     weight = 3,
+#     color = "white",
+#     fillOpacity = 1,
+#     bringToFront = TRUE),
+#     label = labels_s_nats,
+#     labelOptions = labelOptions(
+#       style = list("font-weight" = "normal", padding = "3px 8px"),
+#       textsize = "12px",
+#       direction = "auto")) %>% 
+#   addLegend(title = "TPP Swing to LNP (%)", pal = pal_t_s_nats, values = c(-20, 20), position = "bottomright") %>% 
+#   addPolygons(data = nats_map_seat, color = "#696969", weight = 1, opacity = 1, fill = FALSE, label = x, highlight = highlightOptions(weight = 1, color = "black", bringToFront = TRUE))
+# 
+# saveWidget(m1, file=paste0("C:/Users/matt/Documents/R/sa_map/nats/m_sa2_", x, ".html"), selfcontained = T)
+# 
 
 
 
@@ -563,10 +601,46 @@ f_lnp_maps <- function(x) {
 
 # names(p_lnp_maps) <- unique(list_lnp)
 
+# individual lnp sa1 seat
+
+x <- "McPherson"
+
+sa1_s_lnp_seat <- sa1_s %>% 
+  filter(div_nm %in% x)
+
+sa1_map_s <- sp::merge(sa1_map_org, sa1_s_lnp_seat, by = "SA1_7DIG16", all=F, duplicateGeoms = T)
+
+lnp_map_seat <- fed_elec[fed_elec@data$Elect_div == x, ]
+
+# sa1_map_s_wc <- raster::intersect(sa1_map_s, wc_map)
+
+labels_s_lnp <- sprintf(
+  "<strong>%s</strong><br/>LNP Swing: %g %%",
+  sa1_map_s$SA1_7DIG16, round(sa1_map_s$swing,1)) %>% lapply(htmltools::HTML)
+
+m1 <- leaflet(data = sa1_map_s) %>% 
+  addProviderTiles("CartoDB") %>%  
+  addPolygons(fillColor = ~pal_t_s_nats(swing), fillOpacity = 0.5, weight = 0.5, color = "black", smoothFactor = 0, highlight = highlightOptions(
+    weight = 3,
+    color = "white",
+    fillOpacity = 1,
+    bringToFront = TRUE),
+    label = labels_s_lnp,
+    labelOptions = labelOptions(
+      style = list("font-weight" = "normal", padding = "3px 8px"),
+      textsize = "12px",
+      direction = "auto")) %>% 
+  addLegend(title = "TPP Swing to LNP (%)", pal = pal_t_s_nats, values = c(-20, 20), position = "bottomright") %>% 
+  addPolygons(data = lnp_map_seat, color = "#696969", weight = 1, opacity = 1, fill = FALSE, label = x, highlight = highlightOptions(weight = 1, color = "black", bringToFront = TRUE))
+
+m1 <- m1 %>% 
+  setView(lng = 153.465840, lat = -28.123740, zoom = 11)
+
+# saveWidget(m1, file=paste0("C:/Users/matt/Documents/R/sa_map/lnp/m_sa1_", x, ".html"), selfcontained = T)
+
+
 
 # sa2
-
-mcpherson
 
 f_lnp_maps_sa2 <- function(x) {
   
@@ -604,40 +678,178 @@ f_lnp_maps_sa2 <- function(x) {
 
 # individual lnp seat
 
-# x <- "Mcpherson"
+x <- "Mcpherson"
 
-# lnp_map_seat <- fed_elec[fed_elec@data$Elect_div == x, ]
+lnp_map_seat <- fed_elec[fed_elec@data$Elect_div == x, ]
 
-# sa2_map_s_seat <- raster::intersect(sa2_map_s, lnp_map_seat)
+sa2_map_s_seat <- raster::intersect(sa2_map_s, lnp_map_seat)
 
-# labels_s_lnp <- sprintf(
-  #"<strong>%s</strong><br/>LNP Swing: %g %%<br/>Total votes: %g",
-  #sa2_map_s_seat$SA2_NAME16, sa2_map_s_seat$swing, round(sa2_map_s_seat$v_t_sa2,0)
-# ) %>% lapply(htmltools::HTML)
+labels_s_lnp <- sprintf(
+  "<strong>%s</strong><br/>LNP Swing: %g %%<br/>Total votes: %g",
+  sa2_map_s_seat$SA2_NAME16, sa2_map_s_seat$swing, round(sa2_map_s_seat$v_t_sa2,0)) %>% lapply(htmltools::HTML)
 
-# m1 <- leaflet(data = sa2_map_s_seat) %>% 
-  #addProviderTiles("CartoDB") %>%  
-  #addPolygons(fillColor = ~pal_t_s_nats(swing), fillOpacity = 0.5, weight = 0.5, color = "black", smoothFactor = 0, highlight = highlightOptions(
-   # weight = 3,
-    #color = "white",
-    #fillOpacity = 1,
-    #bringToFront = TRUE),
-    #label = labels_s_lnp,
-    #labelOptions = labelOptions(
-     # style = list("font-weight" = "normal", padding = "3px 8px"),
-      #textsize = "12px",
-      #direction = "auto")) %>% 
-#  addLegend(title = "TPP Swing to LNP (%)", pal = pal_t_s_nats, values = c(-20, 20), position = "bottomright") %>% 
- # addPolygons(data = lnp_map_seat, color = "#696969", weight = 1, opacity = 1, fill = FALSE, label = x, highlight = highlightOptions(weight = 1, color = "black", bringToFront = TRUE))
+m1 <- leaflet(data = sa2_map_s_seat) %>%
+  addProviderTiles("CartoDB") %>%
+  addPolygons(fillColor = ~pal_t_s_nats(swing), fillOpacity = 0.5, weight = 0.5, color = "black", smoothFactor = 0, highlight = highlightOptions(
+    weight = 3,
+    color = "white",
+    fillOpacity = 1,
+    bringToFront = TRUE),
+    label = labels_s_lnp,
+    labelOptions = labelOptions(
+      style = list("font-weight" = "normal", padding = "3px 8px"),
+      textsize = "12px",
+      direction = "auto")) %>%
+  addLegend(title = "TPP Swing to LNP (%)", pal = pal_t_s_nats, values = c(-20, 20), position = "bottomright") %>%
+  addPolygons(data = lnp_map_seat, color = "#696969", weight = 1, opacity = 1, fill = FALSE, label = x, highlight = highlightOptions(weight = 1, color = "black", bringToFront = TRUE))
 
 # saveWidget(m1, file=paste0("C:/Users/matt/Documents/R/sa_map/lnp/m_sa2_", x, ".html"), selfcontained = T)
 
+# CQ ---- 
+
+list_cq <- c("Capricornia", "Flynn", "Maranoa")
+
+sa1_s_cq <- sa1_s %>% 
+  filter(div_nm %in% list_cq)
+
+sa1_map_s <- sp::merge(sa1_map_org, sa1_s_cq, by = "SA1_7DIG16", all=F, duplicateGeoms = T)
+
+cq_map <- fed_elec[fed_elec$Elect_div %in% list_cq, ]
+
+sa1_map_s_cq <- raster::intersect(sa1_map_s, cq_map)
+
+pal_t_s_cq <- colorBin(c("#990000", "#ff0000", "#ff9999", "white", "#ccccff", "#0000ff", "#0000b3"), domain = sa1_map_s_cq$swing, bins = c(-20, -10, -5, 0, 5, 10, 25))
+
+labels_s_cq <- sprintf(
+  "<strong>%s</strong><br/>LNP Swing: %g %%",
+  sa1_map_s_cq$SA1_7DIG16, round(sa1_map_s_cq$swing,1)) %>% lapply(htmltools::HTML)
+
+m_sa1_s_cq <- leaflet(data = sa1_map_s_cq) %>% 
+  addProviderTiles("CartoDB") %>%  
+  addPolygons(fillColor = ~pal_t_s_cq(swing), fillOpacity = 0.5, weight = 0.5, color = "black", smoothFactor = 0, highlight = highlightOptions(
+    weight = 3,
+    color = "white",
+    fillOpacity = 1,
+    bringToFront = TRUE),
+    label = labels_s_cq,
+    labelOptions = labelOptions(
+      style = list("font-weight" = "normal", padding = "3px 8px"),
+      textsize = "12px",
+      direction = "auto")) %>% 
+  addPolygons(data = cq_map, color = "#696969", weight = 2, opacity = 1, fill = FALSE, label = cq_map$Elect_div, highlight = highlightOptions(weight = 2, color = "black", bringToFront = TRUE)) %>% 
+  addLegend(title = "TPP Swing to LNP (%)", pal = pal_t_s_cq, values = c(-20, 20), position = "bottomright")
+
+# saveWidget(m_sa1_s_cq, file="m_sa1_s_cq.html")
+
+# sa2 
+
+cq_map_seat <- fed_elec[fed_elec@data$Elect_div %in% list_cq, ]
+
+sa2_map_s_cq <- raster::intersect(sa2_map_s, cq_map_seat)
+
+labels_s_cq <- sprintf(
+  "<strong>%s</strong><br/>LNP Swing: %g %%<br/>Total votes: %g",
+  sa2_map_s_cq$SA2_NAME16, sa2_map_s_cq$swing, round(sa2_map_s_cq$v_t_sa2,0)
+) %>% lapply(htmltools::HTML)
+
+m_sa2_s_cq <- leaflet(data = sa2_map_s_cq) %>% 
+  addProviderTiles("CartoDB") %>%  
+  addPolygons(fillColor = ~pal_t_s_cq(swing), fillOpacity = 0.5, weight = 0.5, color = "white", smoothFactor = 0, highlight = highlightOptions(
+    weight = 3,
+    color = "white",
+    fillOpacity = 1,
+    bringToFront = TRUE),
+    label = labels_s_cq,
+    labelOptions = labelOptions(
+      style = list("font-weight" = "normal", padding = "3px 8px"),
+      textsize = "12px",
+      direction = "auto")) %>% 
+  addLegend(title = "TPP Swing to LNP (%)", pal = pal_t_s_cq, values = c(-20, 20), position = "bottomright") %>% 
+  addPolygons(data = cq_map_seat, color = "#696969", weight = 1, opacity = 1, fill = FALSE, label = x, highlight = highlightOptions(weight = 1, color = "black", bringToFront = TRUE))
+
+# saveWidget(m_sa2_s_cq, file="m_sa2_s_cq.html")
+
+# sa1 TPP 
+
+pal_t <- colorBin(c("#990000", "#ff0000", "#ff9999", "#ffcccc", "#9999ff", "#ccccff", "#0000ff", "#0000b3"), domain = sa1_map_s_cq$p_lnp_sa1, bins = c(0, 30, 40, 45, 50, 55, 60, 70, 100))
+
+labels_cq <- sprintf(
+  "<strong>%s</strong><br/>%g per cent",
+  sa1_map_s_cq$SA1_7DIG16, sa1_map_s_cq$p_lnp_sa1
+ ) %>% lapply(htmltools::HTML)
+
+
+m_sa1_cq <- leaflet(data = sa1_map_s_cq) %>%
+   addProviderTiles("CartoDB") %>%
+  addPolygons(fillColor = ~pal_t(p_lnp_sa1), fillOpacity = 0.5, weight = 0.5, color = "black", smoothFactor = 0, highlight = highlightOptions(
+         weight = 3,
+         color = "white",
+         fillOpacity = 1,
+         bringToFront = TRUE),
+         label = labels_cq,
+         labelOptions = labelOptions(
+           style = list("font-weight" = "normal", padding = "3px 8px"),
+           textsize = "12px",
+           direction = "auto")) %>% 
+  addPolygons(data = cq_map, color = "white", weight = 2, opacity = 1, fill = FALSE, label = cq_map$Elect_div, highlight = highlightOptions(weight = 2, color = "black", bringToFront = TRUE)) %>% 
+  addLegend(title = "LNP TPP (%)", pal = pal_t, values = c(0, 100), position = "bottomright")
+
+# saveWidget(m_sa1_cq, file="m_sa1_cq.html")
+
+# sa2 TPP CQ
+
+pal_t <- colorBin(c("#990000", "#ff0000", "#ff9999", "#ffcccc", "#9999ff", "#ccccff", "#0000ff", "#0000b3"), domain = sa2_map_s_cq$p_lnp_sa2, bins = c(0, 30, 40, 45, 50, 55, 60, 70, 100))
+
+labels_cq <- sprintf(
+  "<strong>%s</strong><br/>LNP Swing: %g %%<br/>Total votes: %g",
+  sa2_map_s_cq$SA2_NAME16, round(sa2_map_s_cq$p_lnp_sa2,1), round(sa2_map_s_cq$v_t_sa2,0)
+) %>% lapply(htmltools::HTML)
+
+m_sa2_cq <- leaflet(data = sa2_map_s_cq) %>%
+  addProviderTiles("CartoDB") %>%
+  addPolygons(fillColor = ~pal_t(p_lnp_sa2), fillOpacity = 0.5, weight = 0.5, color = "black", smoothFactor = 0, highlight = highlightOptions(
+    weight = 3,
+    color = "white",
+    fillOpacity = 1,
+    bringToFront = TRUE),
+    label = labels_cq,
+    labelOptions = labelOptions(
+      style = list("font-weight" = "normal", padding = "3px 8px"),
+      textsize = "12px",
+      direction = "auto")) %>% 
+  addPolygons(data = cq_map, color = "white", weight = 2, opacity = 1, fill = FALSE, label = cq_map$Elect_div, highlight = highlightOptions(weight = 2, color = "black", bringToFront = TRUE)) %>% 
+  addLegend(title = "LNP TPP (%)", pal = pal_t, values = c(0, 100), position = "bottomright")
+
+# saveWidget(m_sa2_cq, file="m_sa2_cq.html")
+
+
+# CQ state seats
+
+# data
+
+list_cq_qld <- c("CALLIDE", "GREGORY", "ROCKHAMPTON", "KEPPEL", "BURNETT", "MIRANI", "GLADSTONE", "NANANGO")
+
+qld_elec_cq <- qld_elec[qld_elec$NAME %in% list_cq_qld,]
+
+m_cq_state <- leaflet() %>% 
+  addProviderTiles("CartoDB") %>%  
+  addPolygons(data = qld_elec_cq, color = "red", weight = 1, opacity = 1, fill = FALSE, label = qld_elec_cq$NAME, highlight = highlightOptions(weight = 2, color = "#696969", bringToFront = TRUE), labelOptions = labelOptions(noHide = T,  direction = "center", style = list("font-weight" = "normal", padding = "0px 0px"))) %>% 
+  addPolygons(data = cq_map, color = "grey", weight = 0.5, opacity = 0.4, fill = FALSE, label = cq_map$Elect_div, highlight = highlightOptions(weight = 2, color = "#696969", bringToFront = TRUE)) 
 
 
 
 # EXPORT ---- 
 
-# png("images/p_min_swing.png", width = 6, height = 3, units = "in", res = 300)
-# p_min_swing
-# dev.off()
+png("images/p_min_swing.png", width = 6, height = 3, units = "in", res = 300)
+p_min_swing
+dev.off()
+
+png("images/p_lm_coal.png", width = 6, height = 3, units = "in", res = 300)
+p_lm_coal
+dev.off()
+
+
+# write_csv(sa1_s, "C:/Users/matt/Documents/R/sa_map/data/sa1_s.csv")
+
+# write_csv(sa2_s, "C:/Users/matt/Documents/R/sa_map/data/sa2_s.csv")
 

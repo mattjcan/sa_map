@@ -24,6 +24,8 @@ source("C:/Users/matt/Documents/R/election_2019_nd/election_2019.R")
 
 - Online versions of the maps can be found at https://https://mattjcan.github.io/sa_map/cq_slides.html
 
+- More detail on Capricornia and Flynn can be found here https://mattjcan.github.io/election_2019_nd/cap_slides.html
+
 ---
 
 # We did well in coal seats
@@ -64,6 +66,14 @@ grid.arrange(p_min_swing, p_lm_coal, ncol = 1)
 
 ``` {r }
 grid.arrange(p_pd_coal_alp, p_pd_coal_alp_swing, ncol = 1)
+```
+
+---
+
+# Our primary vote didn't change much
+
+``` {r }
+grid.arrange(p_pd_coal_lnp_swing, p_pd_coal_on, ncol = 1)
 ```
 
 ---

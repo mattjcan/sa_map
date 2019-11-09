@@ -822,7 +822,6 @@ m_sa2_cq <- leaflet(data = sa2_map_s_cq) %>%
 
 # saveWidget(m_sa2_cq, file="m_sa2_cq.html")
 
-
 # CQ state seats
 
 # data

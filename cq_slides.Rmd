@@ -22,7 +22,7 @@ source("C:/Users/matt/Documents/R/election_2019_nd/election_2019.R")
 
 - These slides provide some detailed information of the results of the federal election in 2019 in Central Queenslans. 
 
-- Online versions of the maps can be found at https://mattjcan.github.io/sa_map/....html
+- Online versions of the maps can be found at https://https://mattjcan.github.io/sa_map/cq_slides.html
 
 ---
 
@@ -31,6 +31,16 @@ source("C:/Users/matt/Documents/R/election_2019_nd/election_2019.R")
 ``` {r }
 grid.arrange(p_tpp_coal, p_tpp_coal_swing, ncol = 1)
 ```
+
+---
+
+# The LNP specifically targeted coal
+
+"Low-income workers swung against Labor. Labor’s ambiguous language on Adani, combined with some anti-coal rhetoric, devastated its support in the coal mining communities of regional Queensland and the Hunter Valley."
+
+LABOR REVIEW OF 2019 ELECTION
+
+![](images\bill_adani.jpg)
 
 ---
 
